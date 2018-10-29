@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+<mapper namespace="com.spring.qboard.dao.QuizDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. -->
+	<select id="selectQuizList" resultType="quizVO">
+		SELECT
+		    QNUM, FIELD, PART, LEVELS, DOCUMENT, CHOICE1, CHOICE2, CHOICE3, CHOICE4, RESULT, COMMENTARY
+		FROM QUIZ
+	</select>
+	
+	<insert id="insertQuiz">
+		<selectKey resultType="int" keyProperty="qnum" order="BEFORE">
+	        SELECT NVL(MAX(QNUM),0)+1 FROM QUIZ
+	    </selectKey>
+	    
+		INSERT INTO
+			QUIZ (QNUM, FIELD, PART, LEVELS, DOCUMENT, CHOICE1, CHOICE2, CHOICE3, CHOICE4, RESULT, COMMENTARY)
+			VALUES (#{qnum}, #{field}, #{part}, #{levels}, #{document}, #{choice1}, #{choice2}, #{choice3}, #{choice4}, #{result}, #{commentary})
+		
+	</insert>
+	
+	<select id="selectQuiz" resultType="quizVO">
+		SELECT
+		    QNUM, FIELD, PART, LEVELS, DOCUMENT, CHOICE1, CHOICE2, CHOICE3, CHOICE4, RESULT, COMMENTARY
+		FROM QUIZ
+		WHERE QNUM=#{qnum}
+	</select>
+	
+	<select id="updateQuiz">
+		UPDATE QUIZ
+		SET FIELD = #{field},
+			PART = #{part},
+			LEVELS = #{levels},
+			DOCUMENT = #{document},
+			CHOICE1 = #{choice1},
+			CHOICE2 = #{choice2},
+			CHOICE3 = #{choice3},
+			CHOICE4 = #{choice4},
+			RESULT = #{result},
+			COMMENTARY = #{commentary}
+		WHERE QNUM=#{qnum}
+	</select>
+	
+	<select id="deleteQuiz">
+		DELETE
+		FROM QUIZ
+		WHERE QNUM=#{qnum}
+	</select>
+	
+	
+</mapper>
