@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+<mapper namespace="com.spring.qboard.dao.GradeDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. -->
+	<select id="selectGradeList" resultType="gradeVO">
+		SELECT
+			ID, FIELD, LEVELS, PART1, PART2, PART3, PART4, PART5, PART6, SET1, SET2, SET3, SET4, SET5, SET6
+		FROM GRADE
+	</select>
+	
+	<insert id="insertGrade">
+		INSERT INTO
+			GRADE (ID, FIELD, LEVELS, PART1, PART2, PART3, PART4, PART5, PART6, SET1, SET2, SET3, SET4, SET5, SET6)
+			VALUES (#{id}, #{field}, #{levels}, #{part1}, #{part2}, #{part3}, #{part4}, #{part5}, #{part6}, #{set1}, #{set2}, #{set3}, #{set4}, #{set5}, #{set6})
+	</insert>
+	
+	<select id="selectGrade" resultType="gradeVO">
+		SELECT
+			ID, FIELD, LEVELS, PART1, PART2, PART3, PART4, PART5, PART6, SET1, SET2, SET3, SET4, SET5, SET6
+		FROM GRADE
+		WHERE ID = #{id} AND FIELD = #{field} AND LEVELS = #{levels}
+	</select>
+	
+	<select id="updateGrade">
+		UPDATE GRADE
+		SET PART1 = #{part1},
+			PART2 = #{part2},
+			PART3 = #{part3},
+			PART4 = #{part4},
+			PART5 = #{part5},
+			PART6 = #{part6}
+		WHERE ID = #{id} AND FIELD = #{field} AND LEVELS = #{levels}
+	</select>
+	
+</mapper>
