@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+<mapper namespace="com.spring.qboard.dao.MemberDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. -->
+	<select id="selectMemberList" resultType="memberVO">
+		SELECT
+			ID, NICKNAME, PASSWORD, EMAIL, ADMIN, PICTURE
+		FROM MEMBER
+	</select>
+	
+	<insert id="insertMember">
+		INSERT INTO
+			MEMBER (ID, NICKNAME, PASSWORD, EMAIL, ADMIN, PICTURE)
+			VALUES (#{id}, #{nickname}, #{password}, #{email}, 0, null)
+	</insert>
+	
+	<select id="selectMember" resultType="memberVO">
+		SELECT
+			ID, NICKNAME, PASSWORD, EMAIL, ADMIN, PICTURE
+		FROM MEMBER
+		WHERE ID=#{id}
+	</select>
+	
+	<select id="updateMember">
+		UPDATE MEMBER
+		SET NICKNAME = #{nickname},
+			PASSWORD = #{password},
+			EMAIL = #{email}
+		WHERE ID=#{id}
+	</select>
+	
+	<select id="deleteMember">
+		DELETE
+		FROM MEMBER
+		WHERE ID=#{id}
+	</select>
+	
+	
+</mapper>
