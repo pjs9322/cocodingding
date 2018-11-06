@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+<mapper namespace="com.spring.qboard.dao.BookMarkDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. -->
+	<select id="selectBookMarkList" resultType="bookmarkVO">
+		SELECT
+		    ID, QNUM
+		FROM BOOKMARK
+		ORDER BY ID DESC
+	</select>
+	
+	<insert id="insertBookMark">
+		INSERT INTO
+			BOOKMARK (ID, QNUM)
+			VALUES (#{id}, #{qnum})
+	</insert>
+	
+	<select id="selectBookMark" resultType="bookmarkVO">
+		SELECT ID, QNUM
+		FROM BOOKMARK
+		WHERE ID=#{id}
+	</select>
+	
+	<select id="deleteBookMark">
+		DELETE
+		FROM BOOKMARK
+		WHERE ID=#{id} AND QNUM=#{qnum}
+	</select>
+	
+	
+</mapper>
