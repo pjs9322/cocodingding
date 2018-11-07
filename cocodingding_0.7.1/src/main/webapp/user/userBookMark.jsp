@@ -16,19 +16,19 @@
 	<!-- 게시판 스크립트 설정 -->
 	<script type="text/javascript">
 		function allCheckFunc( obj ) {
-			$("[id=checkOne]").prop("checked", $(obj).prop("checked") );
+			$("[class=checkOne]").prop("checked", $(obj).prop("checked") );
 		}
 		
 		/* 체크박스 체크시 전체선택 체크 여부 */
 		function oneCheckFunc( obj )
 		{
-		var allObj = $("[id=checkAll]");
-		var objName = $(obj).attr("id");
+		var allObj = $("[class=checkAll]");
+		var objName = $(obj).attr("class");
 		
 		if( $(obj).prop("checked") )
 		{
-			checkBoxLength = $("[id="+ objName +"]").length;
-			checkedLength = $("[id="+ objName +"]:checked").length;
+			checkBoxLength = $("[class="+ objName +"]").length;
+			checkedLength = $("[class="+ objName +"]:checked").length;
 		
 			if( checkBoxLength == checkedLength ) {
 				allObj.prop("checked", true);
@@ -43,11 +43,11 @@
 		}
 		
 		$(function(){
-		$("[id=checkAll]").click(function(){
+		$("[class=checkAll]").click(function(){
 			allCheckFunc( this );
 			checkField();
 		});
-		$("[id=checkOne]").each(function(){
+		$("[class=checkOne]").each(function(){
 			$(this).click(function(){
 				oneCheckFunc( $(this) );
 				checkField();
@@ -85,6 +85,14 @@
 		}
 	</script>
 	
+	<script>
+	    $(document).ready(function(){
+	        $('[data-toggle="popover"]').popover();   
+	    });
+	</script>
+	
+	<!-- 게시판 스크립트 설정 끝 -->
+	
 	<script type="text/javascript">
 
 		function paging(num) {
@@ -110,6 +118,11 @@
 	<!-- 게시판 스크립트 설정 끝 -->
 
 	<style>
+		/* 게시판 체크박스 설정 */
+		input.checkList { display:none; }
+		input.checkList:checked ~ label ul li span { color:red; }
+		/* 게시판 체크박스 설정 */
+		
 		/* 매우 작은 기기들 (모바일폰, 768px 보다 작은) */
 		/* 부트스트랩에서 이것은 기본이므로 미디어쿼리가 없습니다. */
 		/* 작은 기기들 (태블릿, 768px 이상) */
@@ -173,6 +186,17 @@
 	      text-align: center;
 	    }
 	   
+	    /* 체크박스 리스트 */
+	    /* 체크박스 본체 숨김 */
+	  	input.checkAll { display:none; }
+	  	input.checkOne { display:none; }
+	  	/* 체크박스의 상태에 따라 연결된 레이블의 속성을 변경*/
+		input.checkAll ~ label ul li span { color:grey; }
+		input.checkOne ~ label ul li span { color:grey; }
+		input.checkAll:checked ~ label ul li span { color:blue; }
+		input.checkOne:checked ~ label ul li span { color:blue; }
+	    /* 체크박스 리스트 */
+	    
 	    #write {
 	      text-align: right;
 	    }
@@ -367,322 +391,282 @@
 					<div class="panel-heading">
 					    <h2 class="panel-title">북마크</h2>
 					</div>
-					<!-- 패널바디 -->
-					<div class="panel-body">
-						<!-- 본문 게시판 -->
-						<div id="container">
-								<div align="right">
-									<!-- Login 검증 -->
-									<!-- jstl의 if문은 else가 없어서 따로 검증해야함. -->
-									<c:if test="${id != null}">
-										<%-- <%@include file="loginOk.jsp" %> --%>
-									</c:if>
-									<c:if test="${id == null}">
-										<%-- <%@include file="login.jsp" %> --%>
-									</c:if>
-								</div>
-								<div id="list">
-									<b></b>
-								</div>
-								<div>
-									<table class="table table-striped table-bordered table-hover">
-										<thead>
-											<tr>
-												<th width="10%">문제번호</th>
-												<th width="5%">분야</th>
-												<th width="5%">단원</th>
-												<th width="10%">레벨</th>
-												<th width="40%">요약</th>
-												<th width="10%">문제보기</th>
-												<th width="10%">삭제</th>
-											</tr>
-										</thead>
-										<tbody>
-											<c:forEach var="article" items="${list}" begin="${pageVO.curStartNumber}" end="${pageVO.curEndNumber}" varStatus="status">
-												<tr>
-													<td>${article.qnum}</td>
-													<td>${article.field}</td>
-													<td>${article.part}</td>
-													<td>${article.levels}</td>
-													<td>${article.abbrev}</td>
-												    <td>
-													<!-- 문제 추가하기 버튼 -->
-														<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modQuiz${status.index}">
-															문제보기
-														</button>
-														<!-- 문제 추가하기 버튼 끝 -->
-														<!-- 문제 추가하기 모달 -->
-														<div class="modal fade" id="modQuiz${status.index}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-															<div class="modal-dialog modal-lg">
-																<!-- 문제 수정 액션폼 -->
-																<input type="hidden" name="qnum" value="${article.qnum}">
-																<div class="modal-content">
-																	<div class="modal-header">
-																		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-																			<span aria-hidden="true">&times;</span>
-																		</button>
-																		<h2 class="modal-title" id="myModalLabel">문제 보기</h2>
-																	</div>
-																	<div class="modal-body">
-																		<div class="container-fluid">
-																			<div class="row">
-																				<div class="col-lg-12">
-																					<!-- 문제 유형선택 -->
-																					<div class="container-fluid">
-																						<h3>문제 유형</h3>
-																						<div class="form-horizontal" role="form">
-																							<div class="col-lg-4">
-																								<button type="button" class="btn btn-primary btn-block">분야</button>
-																							</div>
-																							<div class="col-lg-8">
-																								<select class="form-control" name="field" required="required">
-																									<option <c:if test="${article.field eq 'JAVA'}">selected</c:if>>JAVA</option>
-																									<option <c:if test="${article.field eq 'WEB'}">selected</c:if>>WEB</option>
-																									<option <c:if test="${article.field eq 'DataBase'}">selected</c:if>>DataBase</option>
-																								</select>
-																							</div>
-																						<br/>
-																							<div class="col-lg-4">
-																								<button type="button" class="btn btn-primary btn-block">파트</button>
-																							</div>
-																							<div class="col-lg-8">
-																								<select class="form-control" name="part" required="required">
-																									<option <c:if test="${article.part eq 'Part1'}">selected</c:if>>Part1</option>
-																									<option <c:if test="${article.part eq 'Part2'}">selected</c:if>>Part2</option>
-																									<option <c:if test="${article.part eq 'Part3'}">selected</c:if>>Part3</option>
-																									<option <c:if test="${article.part eq 'Part4'}">selected</c:if>>Part4</option>
-																									<option <c:if test="${article.part eq 'Part5'}">selected</c:if>>Part5</option>
-																									<option <c:if test="${article.part eq 'Part6'}">selected</c:if>>Part6</option>
-																								</select>
-																							</div>
-																						<br/>
-																							<div class="col-lg-4">
-																								<button type="button" class="btn btn-primary btn-block">레벨</button>
-																							</div>
-																							<div class="col-lg-8">
-																								<select class="form-control" name="levels" required="required">
-																									<option value="1" <c:if test="${article.levels eq 1}">selected</c:if>>Lv 1</option>
-																									<option value="2" <c:if test="${article.levels eq 2}">selected</c:if>>Lv 2</option>
-																									<option value="3" <c:if test="${article.levels eq 3}">selected</c:if>>Lv 3</option>
-																									<option value="4" <c:if test="${article.levels eq 4}">selected</c:if>>Lv 4</option>
-																									<option value="5" <c:if test="${article.levels eq 5}">selected</c:if>>Lv 5</option>
-																									<option value="6" <c:if test="${article.levels eq 6}">selected</c:if>>Lv 6</option>
-																									<option value="7" <c:if test="${article.levels eq 7}">selected</c:if>>Lv 7</option>
-																									<option value="8" <c:if test="${article.levels eq 8}">selected</c:if>>Lv 8</option>
-																									<option value="9" <c:if test="${article.levels eq 9}">selected</c:if>>Lv 9</option>
-																									<option value="10" <c:if test="${article.levels eq 10}">selected</c:if>>Lv 10</option>
-																								</select>
-																							</div>
-																						</div>
-																						<br/>
-																					</div>
-																					<!-- 문제 유형선택 끝 -->
-																				</div>	
-																			</div>
-																			<!-- row 끝 -->
-																			<div class="row">
-																				<div class="col-lg-12">
-																					<!-- 문제 지문입력 -->
-																					<div class="container-fluid">
-																						<h3>문제 지문</h3>
-																						<div class="form-horizontal" role="form">
-																							<textarea name="document" class="form-control col-lg-5" rows="5" required="required">${article.document}</textarea>
-																						</div>
-																						<br/>
-																					</div>
-																					<!-- 문제 지문입력 끝 -->
-																				</div>	
-																			</div>
-																			<!-- row 끝 -->
-																			<!-- row 시작 -->
-																			<div class="row">
-																				<div class="col-lg-12">
-																					<!-- 선택지 입력 -->
-																					<div class="container-fluid">
-																						<h3>선택지</h3>
-																						<div class="form-horizontal" role="form">
-																							<div class="form-group form-group-lg">
-																								<div class="col-lg-12">
-																									<div class="col-lg-3">
-																										<button type="button" class="btn btn-primary btn-block">1번 선택지</button>
-																									</div>
-																									<div class="col-lg-6">
-																										<input class="form-control" type="text" id="number1" name="choice1" value="${article.choice1}" required="required">
-																									</div>
-																									<div class="col-lg-3 radio">
-																										<input type="radio" name="result${status.index}" id="" value="1" <c:if test="${article.result eq '1'}">checked</c:if>>
-																									</div>
-																									<br/>
-																								</div>
-																								
-																								<div class="col-lg-12">
-																									<div class="col-lg-3">
-																										<button type="button" class="btn btn-primary btn-block">2번 선택지</button>
-																									</div>
-																									<div class="col-lg-6">
-																										<input class="form-control" type="text" id="number2" name="choice2" value="${article.choice2}" required="required">
-																									</div>
-																									<div class="col-lg-3 radio">
-																										<input type="radio" name="result${status.index}" id="" value="2" <c:if test="${article.result eq '2'}">checked</c:if>>
-																									</div>
-																									<br/>
-																								</div>
-																								
-																								<div class="col-lg-12">
-																									<div class="col-lg-3">
-																										<button type="button" class="btn btn-primary btn-block">3번 선택지</button>
-																									</div>
-																									<div class="col-lg-6">
-																										<input class="form-control" type="text" id="number3" name="choice3" value="${article.choice3}" required="required">
-																									</div>
-																									<div class="col-lg-3 radio">
-																										<input type="radio" name="result${status.index}" id="" value="3" <c:if test="${article.result eq '3'}">checked</c:if>>
-																									</div>
-																									<br/>
-																								</div>
-																								
-																								<div class="col-lg-12">
-																									<div class="col-lg-3">
-																										<button type="button" class="btn btn-primary btn-block">4번 선택지</button>
-																									</div>
-																									<div class="col-lg-6">
-																										<input class="form-control" type="text" id="number4" name="choice4" value="${article.choice4}" required="required">
-																									</div>
-																									<div class="col-lg-3 radio">
-																										<input type="radio" name="result${status.index}" id="" value="4" <c:if test="${article.result eq '4'}">checked</c:if>>
-																									</div>
-																									<br/>
-																								</div>
-																							</div>
-																						</div>
-																					</div>
-																					<!-- 선택지 입력 끝 -->
-																				</div>	
-																			</div>
-																			<!-- row 끝 -->
-																			<!-- row 시작 -->
-																			<div class="row">
-																				<div class="col-lg-12">
-																					<!-- 해설 내용입력 -->
-																					<div class="container-fluid">
-																						<h3>정답 및 해설</h3>
-																						<div class="form-horizontal" role="form">
-																							<textarea name="commentary" class="form-control col-lg-5" rows="5" required="required">${article.commentary}</textarea>
-																						</div>
-																						<br/>
-																					</div>
-																					<!-- 해설 내용입력 끝 -->
-																				</div>	
-																				<!-- col 끝 -->	
-																			</div>
-																			<!-- row 끝 -->
-																		</div>
-																	</div>
-																	<div class="modal-footer">
-																		<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-																	</div>
-																</div>
-																<!-- 문제 수정 폼 끝 -->
-															</div>
-														</div>
-														<!-- 문제 수정하기 모달 끝 -->
-												    </td>
-												    <td><a onclick="bookMark_Delete('${article.qnum}')">삭제</a></td>
-											  </tr>
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						
-						<!-- 게시판 하단 -->
-						<div class="">
-							<form action ="/qboard/bookMarkList.bm" method="get" name="BookMarkListform">
-								<input type="hidden" name="page" value="${pageVO.curPage}">
-								<!-- 게시판 하단 페이지네이션 -->
-								<!-- 페이지 이동부분 -->
-								<nav>
-									<ul class="pageVO">
-										<c:if test="${pageVO.curRange ne 1 }">
-										<input type="button" value="처음" onclick="paging(1)">
-										</c:if>
-										<c:if test="${pageVO.curPage ne 1}">
-										<input type="button" value="이전" onclick="paging('${pageVO.prevPage}')">
-										</c:if>
-										<c:forEach var="pageNum" begin="${pageVO.startPage}" end="${pageVO.endPage}">
-										<c:choose>
-										<c:when test="${pageNum eq pageVO.curPage}">
-										<input style="font-weight:bold;" type="button" value="${pageNum}" onclick="paging('${pageNum}')">
-										</c:when>
-										<c:otherwise>
-										<input type="button" value="${pageNum}" onclick="paging('${pageNum}')">
-										</c:otherwise>
-										</c:choose>
-										</c:forEach>
-										<c:if test="${pageVO.curPage ne pageVO.pageCnt && pageVO.pageCnt > 0}">
-										<input type="button" value="다음" onclick="paging('${pageVO.nextPage}')">
-										</c:if>
-										<c:if test="${pageVO.curRange ne pageVO.rangeCnt && pageVO.rangeCnt > 0}">
-										<input type="button" value="끝" onclick="paging('${pageVO.pageCnt}')">
-										</c:if>
-									</ul>
-								</nav>
-								<!-- 게시판 하단 페이지네이션 끝 -->
-								<!-- 게시판 분류 드롭다운 -->
-								<div class="col-lg-4">
-								<table>
-									<thead>
-										<tr>
-											<th>
-												<input type="checkbox" id="checkAll" <c:if test="${java and web and db}">checked</c:if>>
-											</th>
-											<td>전체선택</td>
-											<td>
-												<input type="checkbox" id="checkOne" name="javaCheck" <c:if test="${java}">checked</c:if>>
-												<input type="hidden" name="java" value="${java}">
-											</td>
-											<td>Java</td>
-											<td>
-												<input type="checkbox" id="checkOne" name="webCheck" <c:if test="${web}">checked</c:if>>
-												<input type="hidden" name="web" value="${web}">
-											</td>
-											<td>Web</td>
-											<td>
-												<input type="checkbox" id="checkOne" name="dbCheck" <c:if test="${db}">checked</c:if>>
-												<input type="hidden" name="db" value="${db}">
-											</td>
-											<td>DB</td>
-										</tr>
-									</tbody>
-								</table>
-								</div>
-								<!-- 게시판 분류 드롭다운 끝 -->
-								<!-- 게시판 검색 란 -->
-								<div class="col-lg-8">
-									<div class="input-group">
-										<select name="opt">
-											<option value="0" <c:if test="${opt eq 0}">selected</c:if>>단원</option>
-											<option value="1" <c:if test="${opt eq 1}">selected</c:if>>레벨</option>
-											<option value="2" <c:if test="${opt eq 2}">selected</c:if>>본문</option>
-										</select>
-											<input type="text" size="20" name="condition" value="${condition}">&nbsp;
-											<input type="submit" value="검색"/>
+					<form action ="/qboard/bookMarkList.bm" method="get" name="BookMarkListform">
+						<!-- 패널바디 -->
+						<div class="panel-body">
+							<div class="col-xs-12">
+								<!-- 체크박스 버튼 -->
+								<div class="btn-group col-xs-8">
+									<span>
+									  <input type="checkbox" id="c1" class="checkAll" <c:if test="${java and web and db}">checked</c:if>>
+									  <label for="c1">
+									    <ul class="pagination">
+									      <li><span>전체</span></li>
+									    </ul>
+									  </label>
+									</span>
+									<span>
+									  <input type="hidden" name="java" value="${java}">
+									  <input type="checkbox" id="c2" class="checkOne" name="javaCheck" <c:if test="${java}">checked</c:if>>
+									  <label for="c2">
+									    <ul class="pagination">
+									      <li><span>Java</span></li>
+									    </ul>
+									  </label>
+									</span>
+									<span>
+									  <input type="hidden" name="web" value="${web}">
+									  <input type="checkbox" id="c3" class="checkOne" name="webCheck" <c:if test="${web}">checked</c:if>>
+									  <label for="c3">
+									    <ul class="pagination">
+									      <li><span>Web</span></li>
+									    </ul>
+									  </label>
+									</span>
+									<span>
+									  <input type="hidden" name="db" value="${db}">
+									  <input type="checkbox" id="c4" class="checkOne" name="dbCheck" <c:if test="${db}">checked</c:if>>
+									  <label for="c4">
+									    <ul class="pagination">
+									      <li><span>DB</span></li>
+									    </ul>
+									  </label>
+									</span>
+																
+									<div class="col-xs-7" style="float:right;">
+										<span class="glyphicon glyphicon-question-sign" data-toggle="popover" title="게시판 분야필터" data-content="보시고 싶은 분야를 선택해주세요."></span>
 									</div>
+									
 								</div>
-								<!-- 게시판 검색 란 끝 -->
-							</form>
+								<!-- 체크박스 버튼 -->
+							</div>
+							<!-- 본문 게시판 -->
+							<div id="container">
+									<div align="right">
+										<!-- Login 검증 -->
+										<!-- jstl의 if문은 else가 없어서 따로 검증해야함. -->
+										<c:if test="${id != null}">
+											<%-- <%@include file="loginOk.jsp" %> --%>
+										</c:if>
+										<c:if test="${id == null}">
+											<%-- <%@include file="login.jsp" %> --%>
+										</c:if>
+									</div>
+									<div id="list">
+										<b></b>
+									</div>
+									<div>
+										<table class="table table-striped table-bordered table-hover">
+											<thead>
+												<tr>
+													<th width="10%">문제번호</th>
+													<th width="5%">분야</th>
+													<th width="5%">단원</th>
+													<th width="10%">레벨</th>
+													<th width="40%">요약</th>
+													<th width="10%">문제보기</th>
+													<th width="10%">삭제</th>
+												</tr>
+											</thead>
+											<tbody>
+												<c:forEach var="article" items="${list}" begin="${pageVO.curStartNumber}" end="${pageVO.curEndNumber}" varStatus="status">
+													<tr>
+														<td>${article.qnum}</td>
+														<td>${article.field}</td>
+														<td>${article.part}</td>
+														<td>${article.levels}</td>
+														<td>${article.abbrev}</td>
+													    <td>
+														<!-- 문제 추가하기 버튼 -->
+															<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modQuiz${status.index}">
+																문제보기
+															</button>
+															<!-- 문제 추가하기 버튼 끝 -->
+															
+															
+															
+															<!-- 문제 추가하기 모달 -->
+															<div class="modal fade" id="modQuiz${status.index}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+																<div class="modal-dialog modal-lg">
+																	<!-- 문제 추가 액션폼 -->
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																				<span aria-hidden="true">&times;</span>
+																			</button>
+																			<h2 class="modal-title" id="myModalLabel">문제 보기</h2>
+																		</div>
+																		<div class="modal-body">
+																			<div class="container-fluid">
+																				<div class="row">
+																					<!-- 문제 유형선택 -->
+																					<div class="row">
+																					    <div class="col-xs-12">
+																						    <div class="table table-responsive">
+																						        <table class="table">
+																							        <tr>
+																							        	<th class="success">문제분야</th>
+																							            <td>
+																											<select class="form-control" required="required">
+																												<option>JAVA</option>
+																												<option>WEB</option>
+																												<option>DataBase</option>
+																											</select>
+																							            </td>
+																							            <td>
+																											<select class="form-control" required="required">
+																												<option>Part1</option>
+																												<option>Part2</option>
+																												<option>Part3</option>
+																												<option>Part4</option>
+																												<option>Part5</option>
+																												<option>Part6</option>
+																											</select>
+																							            </td>
+																							            <td>
+																											<select class="form-control" required="required">
+																												<option value="1">Lv 1</option>
+																												<option value="2">Lv 2</option>
+																												<option value="3">Lv 3</option>
+																												<option value="4">Lv 4</option>
+																												<option value="5">Lv 5</option>
+																												<option value="6">Lv 6</option>
+																												<option value="7">Lv 7</option>
+																												<option value="8">Lv 8</option>
+																												<option value="9">Lv 9</option>
+																												<option value="10">Lv 10</option>
+																											</select>
+																							            </td>
+																							        </tr>
+																							        <tr>
+																							            <th class="success">문제 지문</th>
+																							            <td colspan="3">
+																							               <textarea class="form-control" rows="5" style="resize: none;">${article.document}</textarea>
+																							            </td>
+																							        </tr>
+																							        <tr>
+																							            <th class="success">1번 지문</th>
+																							            <td colspan="2">
+																											<input class="form-control" type="text" id="number1" value="${article.choice1}" required="required">
+																										</td>
+																										<td>
+																											<input type="radio" value="1" <c:if test="${article.result eq '1'}">checked</c:if>>
+																							            </td>
+																							        </tr>
+																							        <tr>
+																							        	<th class="success">2번 지문</th>
+																							            <td colspan="2">
+																											<input class="form-control" type="text" id="number2" value="${article.choice2}" required="required">
+																										</td>
+																										<td>
+																											<input type="radio" value="2" <c:if test="${article.result eq '2'}">checked</c:if>>
+																							            </td>
+																							        </tr>
+																							        <tr>
+																							        	<th class="success">3번 지문</th>
+																							            <td colspan="2">
+																											<input class="form-control" type="text" id="number3" value="${article.choice3}" required="required">
+																										</td>
+																										<td>
+																											<input type="radio" value="3" <c:if test="${article.result eq '3'}">checked</c:if>>
+																							            </td>
+																							        </tr>
+																							        <tr>
+																							        	<th class="success">4번 지문</th>
+																							            <td colspan="2">
+																											<input class="form-control" type="text" id="number4" value="${article.choice4}" required="required">
+																										</td>
+																										<td>
+																											<input type="radio" value="4" <c:if test="${article.result eq '4'}">checked</c:if>>
+																							            </td>
+																							        </tr>
+																							        <tr>
+																							        	<th class="success">해설 및 정답</th>
+																							        	<td colspan="3">
+																											<textarea class="form-control col-lg-5" rows="5" required="required">${article.commentary}</textarea>
+																										</td>
+																							        </tr>
+																							        <tr>
+																							            <td colspan="6" class="text-center">
+																							              <input type="button" class="btn btn-default" data-dismiss="modal" value="닫기">
+																							            </td>
+																							        </tr>
+																							   </table>
+																							   </div>
+																						   </div>
+																					   </div>
+																					<!-- 문제 수정 폼 끝 -->
+																				</div>
+																			</div>
+																			<!-- 문제 수정하기 모달 끝 -->
+																	    </td>
+																	    <td>
+																	    	<input type="button" class="btn btn-danger" onclick="bookMark_Delete('${article.qnum}')"  value="삭제">
+																	    </td>
+																  </tr>
+															</c:forEach>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											
+											<!-- 게시판 하단 -->
+											<div class="">
+												<input type="hidden" name="page" value="${pageVO.curPage}">
+						
+												<!-- 게시판 하단 페이지네이션 -->
+												<nav>
+													<div class="text-center">
+														<ul class="pagination">
+															<li><span style="cursor:pointer" onclick="paging(1)"><span class="glyphicon glyphicon-backward"></span>&nbsp;</span></li>
+															<li><span style="cursor:pointer" <c:if test="${pageVO.curPage ne 1}">onclick="paging('${pageVO.prevPage}')"</c:if>>◀</span></li>
+															<c:forEach var="pageNum" begin="${pageVO.startPage}" end="${pageVO.endPage}">
+																<c:choose>
+																	<c:when test="${pageNum eq pageVO.curPage}">
+																		<li class="active"><span>${pageNum}</span></li>
+																	</c:when>
+																	<c:otherwise>
+																		<li><span style="cursor:pointer" onclick="paging('${pageNum}')">${pageNum}</span></li>
+																	</c:otherwise>
+																</c:choose>
+															</c:forEach>
+															<li><span style="cursor:pointer" <c:if test="${pageVO.curPage ne pageVO.pageCnt && pageVO.pageCnt > 0}">onclick="paging('${pageVO.nextPage}')"</c:if>>▶</span></li>
+															<li><span style="cursor:pointer" onclick="paging('${pageVO.pageCnt}')">&nbsp;<span class="glyphicon glyphicon-forward"></span></span></li>
+														</ul>
+													</div>
+												</nav>
+												<!-- 게시판 하단 페이지네이션 끝 -->
+												
+												<!-- 게시판 검색 란 -->
+												<div class="text-center">
+													<div class="col-xs-3">
+														<select class="form-control" name="opt" onchange="pagingField();">
+															<option value="0" <c:if test="${opt eq 0}">selected</c:if>>단원</option>
+															<option value="1" <c:if test="${opt eq 1}">selected</c:if>>레젤</option>
+															<option value="2" <c:if test="${opt eq 2}">selected</c:if>>본문</option>
+														</select>
+													</div>
+													<div class="col-xs-4">
+														<input class="form-control" type="text" size="20" name="condition" value="${condition}">&nbsp;
+													</div>
+													<div class="col-xs-3">
+														<input type="submit" class="btn btn-primary" value="검색"/>
+													</div>
+												</div>
+												<!-- 게시판 검색 란 끝 -->
+											</div>
+											<!-- 게시판 하단 끝 -->
+										</div>
+										<!-- 패널바디 끝 -->
+									</form>
+								</div>
+								<!-- 패널 끝 -->
+							</div>
+							<!-- 본문 끝 -->
 						</div>
-						<!-- 게시판 하단 끝 -->
+						<!-- 로우 컨텐트 끝-->
 					</div>
-					<!-- 패널바디 끝 -->
-				</div>
-				<!-- 패널 끝 -->
-			</div>
-			<!-- 본문 끝 -->
-		</div>
-		<!-- 로우 컨텐트 끝-->
-	</div>
-	<!-- 섹션 끝 -->
+					<!-- 섹션 끝 -->
 
 
 	<!-- 푸터 -->
