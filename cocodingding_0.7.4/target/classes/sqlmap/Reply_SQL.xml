@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+<mapper namespace="com.spring.qboard.dao.ReplyDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. -->
+	<select id="selectReplyList" resultType="replyVO">
+		SELECT
+			RNUM, BNUM, ID, NICKNAME, DOCUMENT, BDATE
+		FROM REPLY
+		WHERE BNUM=#{bnum} ORDER BY RNUM
+	</select>
+	
+	<select id="selectReply" resultType="replyVO">
+		SELECT
+			RNUM, BNUM, ID, NICKNAME, DOCUMENT, BDATE
+		FROM REPLY
+		WHERE RNUM=#{rnum}
+	</select>
+	
+	<insert id="insertReply">
+		<selectKey resultType="int" keyProperty="rnum" order="BEFORE">
+	        SELECT NVL(MAX(RNUM),0)+1 FROM REPLY
+	    </selectKey>
+	    
+		INSERT INTO
+			REPLY (RNUM, BNUM, ID, NICKNAME, DOCUMENT, BDATE)
+			VALUES (#{rnum}, #{bnum}, #{id}, #{nickname}, #{document}, SYSDATE)
+		
+	</insert>
+	
+	<select id="deleteReply">
+		DELETE
+		FROM REPLY
+		WHERE RNUM=#{rnum}
+	</select>
+	
+	
+</mapper>
